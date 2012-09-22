@@ -31,6 +31,7 @@ public class RemoteReceiver {
                     if (Button.waitForAnyPress() == Button.ID_ESCAPE) {
                         try {
                             conOut.write(255);
+                            conOut.flush();
                             NXT.shutDown();
                         } catch (IOException ex) {
                             System.out.println(ex.toString());

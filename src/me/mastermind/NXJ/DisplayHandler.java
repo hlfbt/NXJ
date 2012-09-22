@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.mastermind.NXJ;
 
 import lejos.nxt.LCD;
@@ -14,7 +10,7 @@ import lejos.util.Delay;
  */
 public class DisplayHandler implements Runnable {
     
-    public static Boolean running = true;
+    public static boolean running = true;
     
     @Override
     public void run() {
@@ -32,7 +28,7 @@ public class DisplayHandler implements Runnable {
             LCD.clear(6);
             LCD.drawString("L "+Motor.C.getTachoCount(),0,6);
             drawConnectionIndicator(0);
-            Delay.msDelay(60); // 60ms~15FPS, 45ms~21FPS, 30ms~31FPS
+            Delay.msDelay(200); // 200ms~5FPS, 60ms~15FPS, 45ms~21FPS, 30ms~31FPS
         }
     }
     

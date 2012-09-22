@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.mastermind.NXJ;
 
 import lejos.nxt.Motor;
@@ -19,7 +15,7 @@ public class EventHandler {
         switch (data) {
             case 0:
                 Motor.A.stop(true);
-                Motor.C.stop();
+                Motor.C.stop(true);
                 RemoteReceiver.state = event = "Standing";
                 return true;
             case 10:

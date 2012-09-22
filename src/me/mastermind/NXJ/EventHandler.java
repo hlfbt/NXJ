@@ -49,8 +49,9 @@ public class EventHandler {
                 event = "SpeedUp";
                 return true;
             case 255:
+                DisplayHandler.running = false;
                 DisplayHandler.drawBye();
-                Delay.msDelay(1000);
+                Delay.msDelay(2000);
                 return false;
             default:
                 event = "Unknown";

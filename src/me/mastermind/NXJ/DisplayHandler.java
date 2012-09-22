@@ -12,29 +12,43 @@ import lejos.util.Delay;
  *
  * @author alex
  */
-public class DisplayHandler extends Thread {
+public class DisplayHandler implements Runnable {
+    
+    public static Boolean running = true;
     
     @Override
     public void run() {
-        while(true) {
-            LCD.clearDisplay();
-            drawConnectionIndicator(0);
+        while(running) {
+            LCD.clear(1);
             LCD.drawString("State: "+RemoteReceiver.state,0,1);
-            LCD.drawString("Byte: "+RemoteReceiver.data,0,2);
-            LCD.drawString(EventHandler.event,10,2);
-            LCD.drawString("Speed:"+RemoteReceiver.motorSpeed,0,3);
-            LCD.drawString("Tachometer:\nR "+Motor.A.getTachoCount()+"\nL "+Motor.C.getTachoCount(), 0, 4);
-            Delay.msDelay(45); // 60ms~15FPS, 45ms~21FPS, 30ms~31FPS
+            LCD.clear(2);
+            LCD.drawString("Packet: "+RemoteReceiver.data,0,2);
+            LCD.clear(3);
+            LCD.drawString("Speed: "+RemoteReceiver.motorSpeed,0,3);
+            LCD.clear(4);
+            LCD.drawString("Tachometer:",0,4);
+            LCD.clear(5);
+            LCD.drawString("R "+Motor.A.getTachoCount(),0,5);
+            LCD.clear(6);
+            LCD.drawString("L "+Motor.C.getTachoCount(),0,6);
+            drawConnectionIndicator(0);
+            Delay.msDelay(60); // 60ms~15FPS, 45ms~21FPS, 30ms~31FPS
         }
     }
     
+    public static void clearDisplay() {
+        LCD.clearDisplay();
+    }
+    
     public static void drawListening() {
+        LCD.clearDisplay();
         LCD.drawString("Listening...", 2, 3);
         drawConnectionIndicator(0);
     }
     
     public static void drawBye() {
-        LCD.drawString("Bye!", 6, 3);
+        LCD.clearDisplay();
+        LCD.drawString("Bye!", 7, 3);
     }
     
     public static void drawConnectionIndicator(int usb0bt1) {

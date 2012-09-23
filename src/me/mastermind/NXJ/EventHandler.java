@@ -1,13 +1,12 @@
 package me.mastermind.NXJ;
 
 import lejos.nxt.Motor;
-import lejos.util.Delay;
 
 /**
  *
- * @author alex
+ * @author Alexander Schulz
  */
-public class EventHandler {
+public class EventHandler { // Everything here should be pretty straight-forward.
     
     public static String event = "none";
     
@@ -45,9 +44,7 @@ public class EventHandler {
                 event = "SpeedUp";
                 return true;
             case 255:
-                DisplayHandler.running = false;
-                DisplayHandler.drawBye();
-                Delay.msDelay(2000);
+                event = "Shutdown";
                 return false;
             default:
                 event = "Unknown";

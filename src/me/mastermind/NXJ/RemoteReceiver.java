@@ -8,6 +8,7 @@ import lejos.nxt.Motor;
 import lejos.nxt.NXT;
 import lejos.nxt.comm.USB;
 import lejos.nxt.comm.USBConnection;
+import lejos.util.Delay;
 
 /**
  *
@@ -16,58 +17,63 @@ import lejos.nxt.comm.USBConnection;
 public class RemoteReceiver {
 
     private static OutputStream conOut = null;
+    private static DisplayHandler displayHandler = new DisplayHandler();
     
     public static int motorSpeed = 360;
     public static int maxSpeed = 760;
     public static int minSpeed = 10;
-    public static String state = "Standing";
     public static int data = 0;
+    public static String state = "Standing";
 
     public static void main(String[] args) {
-        //Emergency Shutdown
-        new Thread(new Runnable() {
+        new Thread(new Runnable() { //Emergency Shutdown Thread (listening in background for escape keypress and sending shutdown packet upon keypress).
             public void run() {
                 while(true) {
                     if (Button.waitForAnyPress() == Button.ID_ESCAPE) {
                         try {
                             conOut.write(255);
                             conOut.flush();
+                            displayHandler.displayState = 2;  // Shutdown fine, display shutdown message.
+                            Delay.msDelay(2000);
                             NXT.shutDown();
-                        } catch (IOException ex) {
+                        } catch (IOException ex) { // Should never happen.
                             System.out.println(ex.toString());
                             Button.waitForAnyPress();
                             NXT.shutDown();
-                        } catch (NullPointerException ex) {
+                        } catch (NullPointerException ex) { // If the PC Program is already offline.
                             NXT.shutDown();
                         }
                     }
                 }
             }
         }).start();
+        new Thread(displayHandler).start(); // Starting teh DisplayHandler get some nice information on the screen.
         
         Motor.A.setSpeed(motorSpeed);
         Motor.C.setSpeed(motorSpeed);
-        int timeout = 0;
+        int timeout = 0; // 0 - forever
         int mode = 0; // NXTComm modes: 0 - All, 1 - USB, 2 - Bluetooth
         Boolean i = true;
 
-        DisplayHandler.drawListening();
+        displayHandler.displayState = 0;
         USBConnection con = USB.waitForConnection(timeout, mode);
         InputStream conIn = con.openInputStream();
         conOut = con.openOutputStream();
-        new Thread(new DisplayHandler()).start();
+        displayHandler.displayState = 1;
 
-        while (i) {
+        while (i) { // Main loop where data is received and processed.
             try {
                 data = conIn.read();
-                i = EventHandler.eventHandler(data);
-            } catch (IOException ex) {
+                i = EventHandler.eventHandler(data); // Processing data in EventHandler.
+            } catch (IOException ex) { // Always these IOExceptions, sheesh...
                 System.out.println(ex.toString());
                 Button.waitForAnyPress();
                 NXT.shutDown();
             }
         }
 
+        displayHandler.displayState = 2; // Shutting down in 2s and displaying shutdown message!
+        Delay.msDelay(2000);
         NXT.shutDown();
     }
 }

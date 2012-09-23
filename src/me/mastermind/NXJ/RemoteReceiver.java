@@ -20,7 +20,7 @@ public class RemoteReceiver {
     private static DisplayHandler displayHandler = new DisplayHandler();
     
     public static int motorSpeed = 360;
-    public static int maxSpeed = 760;
+    public static int maxSpeed = 1000;
     public static int minSpeed = 10;
     public static int data = 0;
     public static String state = "Standing";
@@ -33,7 +33,7 @@ public class RemoteReceiver {
                         try {
                             conOut.write(255);
                             conOut.flush();
-                            displayHandler.displayState = 2;  // Shutdown fine, display shutdown message.
+                            DisplayHandler.displayState = 2;  // Shutdown fine, display shutdown message.
                             Delay.msDelay(2000);
                             NXT.shutDown();
                         } catch (IOException ex) { // Should never happen.
@@ -55,11 +55,11 @@ public class RemoteReceiver {
         int mode = 0; // NXTComm modes: 0 - All, 1 - USB, 2 - Bluetooth
         Boolean i = true;
 
-        displayHandler.displayState = 0;
+        DisplayHandler.displayState = 0;
         USBConnection con = USB.waitForConnection(timeout, mode);
         InputStream conIn = con.openInputStream();
         conOut = con.openOutputStream();
-        displayHandler.displayState = 1;
+        DisplayHandler.displayState = 1;
 
         while (i) { // Main loop where data is received and processed.
             try {
@@ -72,7 +72,7 @@ public class RemoteReceiver {
             }
         }
 
-        displayHandler.displayState = 2; // Shutting down in 2s and displaying shutdown message!
+        DisplayHandler.displayState = 2; // Shutting down in 2s and displaying shutdown message!
         Delay.msDelay(2000);
         NXT.shutDown();
     }

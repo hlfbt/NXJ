@@ -22,10 +22,20 @@ public class EventHandler { // Everything here should be pretty straight-forward
                 Motor.C.backward();
                 RemoteReceiver.state = event = "Backward";
                 return true;
+            case 15:
+                Motor.A.forward();
+                Motor.C.backward();
+                RemoteReceiver.state = event = "Left";
+                return true;
             case 20:
                 Motor.A.forward();
                 Motor.C.forward();
                 RemoteReceiver.state = event = "Forward";
+                return true;
+            case 25:
+                Motor.A.backward();
+                Motor.C.forward();
+                RemoteReceiver.state = event = "Right";
                 return true;
             case 30:
                 if (RemoteReceiver.motorSpeed != RemoteReceiver.minSpeed) {

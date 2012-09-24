@@ -9,7 +9,6 @@ import lejos.nxt.NXT;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
 import lejos.nxt.comm.USB;
-import lejos.nxt.comm.USBConnection;
 import lejos.util.Delay;
 
 /**

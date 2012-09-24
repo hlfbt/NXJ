@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.NXT;
+import lejos.nxt.comm.Bluetooth;
+import lejos.nxt.comm.NXTConnection;
 import lejos.nxt.comm.USB;
 import lejos.nxt.comm.USBConnection;
 import lejos.util.Delay;
@@ -24,6 +26,7 @@ public class RemoteReceiver {
     public static int minSpeed = 10;
     public static int data = 0;
     public static String state = "Standing";
+    public static int protocol;
 
     public static void main(String[] args) {
         new Thread(new Runnable() { //Emergency Shutdown Thread (listening in background for escape keypress and sending shutdown packet upon keypress).
@@ -33,7 +36,7 @@ public class RemoteReceiver {
                         try {
                             conOut.write(255);
                             conOut.flush();
-                            DisplayHandler.displayState = 2;  // Shutdown fine, display shutdown message.
+                            DisplayHandler.displayState = 4;  // Shutdown fine, display shutdown message.
                             Delay.msDelay(2000);
                             NXT.shutDown();
                         } catch (IOException ex) { // Should never happen.
@@ -56,10 +59,24 @@ public class RemoteReceiver {
         Boolean i = true;
 
         DisplayHandler.displayState = 0;
-        USBConnection con = USB.waitForConnection(timeout, mode);
+        NXTConnection con;
+        while (true) {
+            int keyPress = Button.waitForAnyPress();
+            if (keyPress == Button.ID_LEFT) { // Bluetooth
+                protocol = 2;
+                DisplayHandler.displayState = 1;
+                con = Bluetooth.waitForConnection(timeout, mode);
+                break;
+            } else if (keyPress == Button.ID_RIGHT) { // USB
+                protocol = 1;
+                DisplayHandler.displayState = 1;
+                con = USB.waitForConnection(timeout, mode);
+                break;
+            }
+        }
         InputStream conIn = con.openInputStream();
         conOut = con.openOutputStream();
-        DisplayHandler.displayState = 1;
+        DisplayHandler.displayState = 3;
 
         while (i) { // Main loop where data is received and processed.
             try {
@@ -72,7 +89,7 @@ public class RemoteReceiver {
             }
         }
 
-        DisplayHandler.displayState = 2; // Shutting down in 2s and displaying shutdown message!
+        DisplayHandler.displayState = 4; // Shutting down in 2s and displaying shutdown message!
         Delay.msDelay(2000);
         NXT.shutDown();
     }
